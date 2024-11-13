@@ -12,15 +12,10 @@ class FormSubmission extends Model
 
     protected $fillable = [
         'form_id',
-        'submitted_at',
         'fields'
     ];
 
     protected $casts = [
         'fields' => 'array',
-    ];
-
-    protected $attributes = [
-        'submitted_at' => 'CURRENT_TIMESTAMP',
     ];
 }

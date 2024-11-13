@@ -16,7 +16,6 @@ class CreateFormSubmissionsTable extends Migration
         Schema::create('form_submissions', function (Blueprint $table) {
             $table->id();
             $table->string('form_id');
-            $table->timestamp('submitted_at')->useCurrent();
             $table->json('fields');
             $table->timestamps();
         });
