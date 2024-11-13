@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
-use App\Http\Services\FormService;
+use App\Services\FormService;
 
 class FormController extends Controller
 {
@@ -58,20 +58,19 @@ class FormController extends Controller
             }
 
             $validationRules[$field['id']] = $rules;
-            $validator = Validator::make($request->input('fields'), $validationRules);
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 400);
-            }
-
-            $validatedData = $validator->validated();
-
-            return response()->json([
-                'message' => 'Dados salvos com sucesso!',
-                'data' => $validatedData
-            ], 201);
         }
 
-        return Response::make($form, 200, ['Content-Type' => 'json']);
+        $validator = Validator::make($request->input('fields'), $validationRules);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $validatedData = $validator->validated();
+        $submit = $this->formService->submitForm($formId, $validatedData);
+
+        return response()->json([
+            'message' => 'Dados salvos com sucesso!',
+            'data' => $submit
+        ], 201);
     }
 }
