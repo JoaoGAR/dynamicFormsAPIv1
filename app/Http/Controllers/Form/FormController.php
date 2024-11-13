@@ -22,9 +22,8 @@ class FormController extends Controller
     {
         $formId = $request->formId;
         $form = $this->formService->getForm($formId);
-
         if (!$form) {
-            return response()->json(['error' => 'Formulário não encontrado'], 404);
+            return response()->json(['error' => 'Formulário não encontrado.'], 404);
         }
 
         return Response::make($form, 200, ['Content-Type' => 'json']);
@@ -34,10 +33,17 @@ class FormController extends Controller
     {
         $form = $this->formService->getForm($formId);
         if (!$form) {
-            return response()->json(['error' => 'Formulário não encontrado'], 404);
+            return response()->json(['error' => 'Formulário não encontrado.'], 404);
         }
 
+        $formSubmission = $request->data;
+        $formSubmission = json_decode($formSubmission, true);
         $validationRules = [];
+        $preparedData = [];
+
+        foreach ($formSubmission['fields'] as $fieldData) {
+            $preparedData[$fieldData['field']] = $fieldData['value'];
+        }
 
         foreach ($form['fields'] as $field) {
             $rules = [];
@@ -60,17 +66,35 @@ class FormController extends Controller
             $validationRules[$field['id']] = $rules;
         }
 
-        $validator = Validator::make($request->input('fields'), $validationRules);
+        $validator = Validator::make($preparedData, $validationRules);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
         $validatedData = $validator->validated();
-        $submit = $this->formService->submitForm($formId, $validatedData);
+        $submit = $this->formService->submitForm($formId, $formSubmission);
+
+        if (!$submit) {
+            return response()->json(['error' => 'Falha ao salvar valores.'], 400);
+        }
 
         return response()->json([
             'message' => 'Dados salvos com sucesso!',
             'data' => $submit
+        ], 201);
+    }
+
+    public function getFormSubmissions($formId)
+    {
+        $form = $this->formService->getForm($formId);
+        if (!$form) {
+            return response()->json(['error' => 'Formulário não encontrado.'], 404);
+        }
+
+        $data = $this->formService->getFormSubmissions($formId);
+        return response()->json([
+            'message' => 'Dados carregados com sucesso!',
+            'data' => $data
         ], 201);
     }
 }

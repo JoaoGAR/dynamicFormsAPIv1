@@ -15,7 +15,6 @@ class FormSubmissionDAO
                 'fields' => $formSubmission
             ]);
             return $submit;
-
         } catch (\Throwable $th) {
             return null;
         }
@@ -24,10 +23,8 @@ class FormSubmissionDAO
     public function getFormSubmissions($formId)
     {
         try {
-
-            $submissions = FormSubmission::where('form_id', $formId);
+            $submissions = FormSubmission::where('form_id', $formId)->get();
             return $submissions;
-            
         } catch (\Throwable $th) {
             return null;
         }

@@ -31,7 +31,6 @@ class FormService
                 return null;
             }
             return $form;
-            
         } catch (\Throwable $th) {
             return null;
         }
@@ -40,14 +39,18 @@ class FormService
     public function submitForm($formId, $formSubmission)
     {
         try {
-
-            if (!is_array($formSubmission) && !is_object($formSubmission)) {
-                $formSubmission = json_decode($formSubmission, true);
-            }
-
             $submit = $this->formSubmissionDAO->saveFormSubmission($formId, $formSubmission);
             return $submit;
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
 
+    public function getFormSubmissions($formId)
+    {
+        try {
+            $data = $this->formSubmissionDAO->getFormSubmissions($formId);
+            return $data;
         } catch (\Throwable $th) {
             return null;
         }
