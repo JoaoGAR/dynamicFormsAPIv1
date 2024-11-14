@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 
 use App\Services\FormService;
+use App\Services\FormSubmissionValidator;
 
 class FormController extends Controller
 {
     protected $formService;
+    protected $formSubmissionValidator;
 
-    public function __construct(FormService $formService)
+    public function __construct(FormService $formService, FormSubmissionValidator $formSubmissionValidator)
     {
         $this->formService = $formService;
+        $this->formSubmissionValidator = $formSubmissionValidator;
     }
 
     public function getForm(Request $request)
@@ -45,33 +48,13 @@ class FormController extends Controller
             $preparedData[$fieldData['field']] = $fieldData['value'];
         }
 
-        foreach ($form['fields'] as $field) {
-            $rules = [];
-            if ($field['required']) {
-                $rules[] = 'required';
-            }
+        $this->validator->setRules($form['fields']);
+        $validationResult = $this->validator->validate($preparedData);
 
-            switch ($field['type']) {
-                case 'text':
-                    $rules[] = 'string';
-                    break;
-                case 'number':
-                    $rules[] = 'integer';
-                    break;
-                case 'select':
-                    $rules[] = 'in:' . implode(',', $field['choices']);
-                    break;
-            }
-
-            $validationRules[$field['id']] = $rules;
+        if (!$validationResult->passes()) {
+            return response()->json(['errors' => $validationResult->errors()], 400);
         }
-
-        $validator = Validator::make($preparedData, $validationRules);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-
-        $validatedData = $validator->validated();
+        
         $submit = $this->formService->submitForm($formId, $formSubmission);
 
         if (!$submit) {
