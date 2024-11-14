@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Services\FormService;
 use App\Services\FormSubmissionValidator;
+use App\Http\Resources\FormSubmissionResource;
 
 class FormController extends Controller
 {
@@ -75,6 +76,8 @@ class FormController extends Controller
         }
 
         $data = $this->formService->getFormSubmissions($formId);
+        $data = FormSubmissionResource::collection($data);
+
         return response()->json([
             'message' => 'Dados carregados com sucesso!',
             'data' => $data
