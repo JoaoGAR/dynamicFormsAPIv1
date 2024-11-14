@@ -49,8 +49,8 @@ class FormController extends Controller
             $preparedData[$fieldData['field']] = $fieldData['value'];
         }
 
-        $this->validator->setRules($form['fields']);
-        $validationResult = $this->validator->validate($preparedData);
+        $this->formSubmissionValidator->setRules($form['fields']);
+        $validationResult = $this->formSubmissionValidator->validate($preparedData);
 
         if (!$validationResult->passes()) {
             return response()->json(['errors' => $validationResult->errors()], 400);
