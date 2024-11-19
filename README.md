@@ -3,10 +3,10 @@
 
 ## Requisitos
 
-> PHP: >= 8.1
-> Laravel: >= 10.x
-> Banco de Dados suportado: MySQL, PostgreSQL ou SQLite
-> Composer para gerenciar dependências.
+<p>PHP: >= 8.1</p>
+<p>Laravel: >= 10.x</p>
+<p>Banco de Dados suportado: MySQL, PostgreSQL ou SQLite</p>
+<p>Composer para gerenciar dependências</p>
 
 >[!NOTE]
     <p>Caso esteja usando Docker destop para windows é necessário clonar o repositório para dentro do Ubunto do WSL2</p>
@@ -30,12 +30,11 @@
 # Endpoints
 
 **1. Listar Formulários**
-GET '/api/forms'
-    Retorna uma lista de todos os formulários disponíveis.
+<p>GET '/api/forms'</p>
+    <p>Retorna uma lista de todos os formulários disponíveis.</p>
 
-*** Resposta de Sucesso: ***
-json:
-`` [
+***Resposta de Sucesso:***
+```json
     {
         "id": 1,
         "name": "Formulário de Cadastro",
@@ -54,7 +53,7 @@ json:
             }
         ]
     }
-] ``
+```
 Erros: N/A
 
 
@@ -67,7 +66,8 @@ GET /api/forms/{id}
 > id: ID do formulário.
 
 ***Resposta de Sucesso:***
-`` {
+```json
+{
     "id": 1,
     "name": "Formulário de Cadastro",
     "fields": [
@@ -84,7 +84,9 @@ GET /api/forms/{id}
             "required": false
         }
     ]
-} ``
+}
+```
+
 ***Erros:***
 > 404: Formulário não encontrado.
 
@@ -95,9 +97,10 @@ POST /api/forms/{id}/submit
 
 ### Parâmetros:
 
-> id: ID do formulário.
-> Body (JSON):
-`` {
+<p> id: ID do formulário.</p>
+<p> Body (JSON):</p>
+```json
+{
     "data": {
         "fields": [
             {
@@ -110,23 +113,28 @@ POST /api/forms/{id}/submit
             }
         ]
     }
-} ``
+}
+```
 
 ***Resposta de Sucesso:***
-`` {
+```json
+{
     "message": "Dados salvos com sucesso!",
     "data": {
         "form_id": 1,
         "submission_id": 15
     }
-} ``
+}
+```
 
 ***Erros:***
 > 404: Formulário não encontrado.
 > 400: Erros de validação ou falha ao salvar os dados.
 
-`` {
+```json
+{
     "errors": {
         "name": ["O campo Nome é obrigatório."]
     }
-} ``
+}
+```
